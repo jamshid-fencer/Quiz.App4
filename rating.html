@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,"/>
+  <title>Рейтинг сотрудников</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 80%;
+      margin: 0 auto 30px;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #4caf50;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    tr:hover {
+      background: #f1f1f1;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      color: white;
+      outline: none;
+    }
+
+    .home-btn {
+      background: #007bff;
+    }
+
+    .clear-btn {
+      background: #dc3545;
+    }
+
+    .empty {
+      font-size: 18px;
+      color: #555;
+    }
+    .container {
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+     
+    @media (max-width: 640px) {
+      .container{
+        max-width: 500px;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .buttons{
+        margin-left: 30px;
+        width: 100%;
+      }
+      .home-btn{
+        padding: 10px 60px;
+      }
+      .clear-btn{
+        padding: 10px 60px;
+      }
+    }
+    @media (max-width: 390px) {
+      .container{
+        max-width: 400px;
+        width: 100%;
+      }
+      table{
+        font-size: 10px;
+        margin-left: -45px;
+        height: 150px;
+        
+      }
+      .home-btn{
+        padding: 10px 80px;
+        display: flex;
+        justify-content: center; /* по горизонтали */
+        align-items: center;     /* по вертикали */
+        
+      }
+      .clear-btn{
+        padding: 10px 44px;
+        display: flex;
+        justify-content: center; /* по горизонтали */
+        align-items: center;     /* по вертикали */
+         
+      }
+      .buttons{
+        margin: 0;
+        flex-wrap: wrap;
+      }
+      h1{
+        width: 400px;
+        font-size: 30px;
+        margin-left: -70px;
+      }
+      td{
+        padding: 1px;
+      }
+      th, td{
+        padding: 12px;
+      }
+    }
+    @media (max-width: 415px) {
+      table{
+        margin-left: -50px;
+      }
+      h1{
+        width: 400px;
+        margin-left: 10px;
+      }
+      .buttons{
+        width: 450px;
+        margin-left: -5px;
+      }
+    }
+    
+
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 data-i18n="ratingTitle">🏆 Рейтинг сотрудников</h1>
+
+    <table id="ratingTable">
+      <thead>
+        <tr>
+          <th data-i18n="thNumber">№</th>
+          <th data-i18n="thName">ФИО</th>
+          <th data-i18n="thBranch">Филиал</th>
+          <th data-i18n="thScore">Результат</th>
+          <th data-i18n="thDate">Дата прохождения</th>
+        </tr>
+      </thead>
+      <tbody id="ratingBody">
+        <!-- Данные вставляются через JS -->
+      </tbody>
+    </table>
+
+    <p id="emptyMessage" class="empty" style="display:none;" data-i18n="emptyMessage">Пока никто не прошёл тест 🤷‍♂️</p>
+
+    <div class="buttons">
+      <button class="home-btn" onclick="goHome()" data-i18n="homeBtn">🏠 Домой</button>
+      <button class="clear-btn" onclick="clearResults()" data-i18n="clearBtn">🗑 Очистить рейтинг</button>
+    </div>
+  </div>
+  
+  <script src="javascript/language.js"></script>
+  <script>
+    const getLang = () => localStorage.getItem("lang") || "ru";
+    function loadResults() {
+      const ratingBody = document.getElementById("ratingBody");
+      const emptyMessage = document.getElementById("emptyMessage");
+
+      // Получаем данные
+      const results = JSON.parse(localStorage.getItem("quizResults")) || [];
+
+      if (results.length === 0) {
+        emptyMessage.style.display = "block";
+        return;
+      }
+
+      // Сортируем по числу правильных ответов (убывание)
+      results.sort((a, b) => {
+        const aScore = parseInt(a.score);
+        const bScore = parseInt(b.score);
+        return bScore - aScore;
+      });
+
+      results.forEach((res, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${res.name}</td>
+          <td>${res.branch}</td>
+          <td>${res.score}</td>
+          <td>${res.date}</td>
+        `;
+        ratingBody.appendChild(row);
+      });
+    }
+
+    window.addEventListener("languageChanged", () => {
+  // очищаем тело таблицы и заново вызываем loadResults()
+  document.getElementById("ratingBody").innerHTML = "";
+  loadResults();
+});
+
+    function clearResults() {
+  if (confirm(translations[getLang()].confirmClear)) {
+    localStorage.removeItem("quizResults");
+    location.reload();
+  }
+}
+
+    function goHome() {
+      window.location.href = "index.html";
+    }
+
+    loadResults();
+  </script>
+</body>
+</html>

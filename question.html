@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- google font  -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" />
+</head>
+
+<body>
+    <!-- quiz configuration container -->
+    <div class="config-container">
+        <h2 class="config-title" data-i18n="configTitle">Конфигурация теста</h2>
+
+        <div class="config-option">
+            <h4 class="option-title" data-i18n="chooseCategory">Выберите категорию</h4>
+            <div class="category-options">
+                <button class="category-option active" data-key="mortgage" data-i18n="mortgage">Ипотека</button>
+                <!-- <button class="category-option">Автокредит</button> -->
+                <button class="category-option" data-key="microloan" data-i18n="microloan">Микрозайм</button>
+                <!-- <button class="category-option">Вклады</button> -->
+            </div>
+        </div>
+
+        <div class="config-option">
+            <h4 class="option-title" data-i18n="numberOfQuestions">Количество вопросов</h4>
+            <div class="question-options">
+              <button class="question-option active" data-count="5">5</button>
+              <button class="question-option" data-count="10">10</button>
+              <button class="question-option" data-count="15" data-i18n="q15">15</button>
+              <button class="question-option" data-count="20" data-i18n="q20">20</button>
+            </div>
+        </div>
+
+        <button class="start-quiz-button" data-i18n="startQuiz">Начать тест</button>
+    </div>
+    <!-- quiz container  -->
+    <div class="quiz-container">
+        <header class="quiz-header">
+            <h2 class="quiz-title" data-i18n="quizTitle">Тест по продуктам</h2>
+            <div class="quiz-timer">
+                <span class="material-symbols-outlined">
+                  timer
+                </span>
+                <p class="time-duration">15с</p>
+            </div>
+        </header>
+
+        <div class="quiz-content">
+            <h1 class="question-text">Lorem ipsum dolor sit amet.</h1>
+            <ul class="answer-options">
+                <li class="answer-option incorrect">Lorem, ipsum. <span class="material-symbols-outlined">
+                        cancel
+                    </span></li>
+                <li class="answer-option correct">Lorem, ipsum. <span class="material-symbols-outlined">
+                    check_circle
+                    </span></li>
+                <li class="answer-option">Lorem, ipsum.</li>
+                <li class="answer-option">Lorem, ipsum.</li>
+            </ul>
+        </div>
+
+        <div class="quiz-footer">
+            <p class="question-status"><b>1</b>из<b>5</b>вопросов</p>
+            <button class="next-question-btn" data-i18n="next">Дальше
+                <span class="material-symbols-outlined">
+                    arrow_right_alt
+                </span>
+            </button>
+        </div>
+    </div>
+    <!-- quiz result container -->
+     <div class="result-container">
+        <img src="celebration.webp" class="result-img">
+        <h2 class="result-title" data-i18n="resultTitle">Тест завершен</h2>
+        <p id="userInfo" class="user-info"></p>
+        <p class="result-message"></p>
+        <!-- <button class="try-again-btn">Заново</button> -->
+     </div>
+     <script src="javascript/questions.js"></script>
+     <script src="javascript/language.js"></script>
+     <script src="javascript/script.js"></script>
+</body>
+
+</html>

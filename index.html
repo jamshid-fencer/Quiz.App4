@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация</title>
+  <style>
+    body {
+      background-color: #e9ecef;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    .register-container {
+      max-width: 400px;
+      margin: 120px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .register-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .register-container label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+
+    .register-container input {
+      width: 95%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      outline: none;
+    }
+
+    .register-container input:focus {
+      border-color: #228B22;
+      box-shadow: 0 0 5px rgba(34, 139, 34, 0.4);
+    }
+
+    .register-container button {
+      width: 100%;
+      margin-top: 25px;
+      padding: 10px;
+      border: none;
+      background: #228B22;
+      color: white;
+      font-size: 17px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+      outline: none;
+    }
+
+    .register-container button:hover {
+      background: #00A86B;
+    }
+
+    /* Dropdown */
+    .dropdown {
+      position: relative;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .dropdown-selected {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 16px;
+      color: #333;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown-selected:hover {
+      border-color: #8fa8d6;
+    }
+
+    .dropdown-selected::after {
+      content: "▾";
+      font-size: 14px;
+      color: #555;
+      margin-left: 10px;
+    }
+
+    .dropdown-list {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      width: 100%;
+      background-color: #fff;
+      border: 1px solid #cfd4da;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      z-index: 10;
+    }
+
+    .dropdown-list li {
+      list-style: none;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .dropdown-list li:hover {
+      background-color: #f0f4f8;
+    }
+
+    .dropdown.open .dropdown-list {
+      display: block;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h2 data-i18n="title">Регистрация перед тестом</h2>
+    <form id="registerForm">
+      <label for="fullname" data-i18n="fullname">Ф.И.О.</label>
+      <input type="text" id="fullname" data-i18n-placeholder="fullnamePlaceholder" placeholder="Введите ФИО." required>
+
+      <label for="branch" data-i18n="branch">Филиал банка:</label>
+      <div class="dropdown" id="branchDropdown">
+        <div class="dropdown-selected" id="branchSelected" data-i18n="branchPlaceholder">Выберите филиал</div>
+        <ul class="dropdown-list">
+          <li data-value="Ташкент" data-i18n="Filials1">Ташкент</li>
+          <li data-value="Самарканд" data-i18n="Filials2">Самарканд</li>
+          <li data-value="Бухара" data-i18n="Filials3">Бухара</li>
+          <li data-value="Наманган" data-i18n="Filials4">Наманган</li>
+          <li data-value="Фергана" data-i18n="Filials5">Фергана</li>
+        </ul>
+      </div>
+
+      <label for="langSelect" data-i18n="Language">Язык:</label>
+      <div class="dropdown" id="langDropdown">
+        <div class="dropdown-selected" id="langSelected">Русский</div>
+        <ul class="dropdown-list">
+          <li data-value="ru">Русский</li>
+          <li data-value="en">English</li>
+          <li data-value="uz">O'zbekcha</li>
+        </ul>
+      </div>
+
+      <button type="submit" data-i18n="startTest">Начать тест</button>
+    </form>
+  </div>
+
+  <!-- Подключаем язык -->
+  <script src="javascript/language.js"></script>
+
+  <script>
+    // Универсальная функция для любого dropdown
+    function setupDropdown(dropdownId, callback){
+      const dropdown = document.getElementById(dropdownId);
+      if(!dropdown) return;
+
+      const selected = dropdown.querySelector(".dropdown-selected");
+      const options = dropdown.querySelectorAll(".dropdown-list li");
+
+      // инициализация
+      if(dropdownId === "langDropdown"){
+        const currentLang = localStorage.getItem("lang") || "ru";
+        options.forEach(opt => {
+          if(opt.getAttribute("data-value") === currentLang){
+            selected.textContent = opt.textContent;
+          }
+        });
+      }
+
+      selected.addEventListener("click", () => dropdown.classList.toggle("open"));
+
+      options.forEach(option => {
+        option.addEventListener("click", () => {
+          selected.textContent = option.textContent;
+          const value = option.getAttribute("data-value");
+          dropdown.classList.remove("open");
+          if(callback) callback(value);
+        });
+      });
+
+      document.addEventListener("click", e => {
+        if(!dropdown.contains(e.target)) dropdown.classList.remove("open");
+      });
+    }
+
+    // Настраиваем филиал
+    let branchValue = "";
+    setupDropdown("branchDropdown", value => { branchValue = value; });
+
+    // Настраиваем язык
+    setupDropdown("langDropdown", value => { setLanguage(value); });
+
+    // Сохранение формы
+    document.getElementById("registerForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const fullname = document.getElementById("fullname").value.trim();
+      if(!fullname || !branchValue) return alert(translations[getLang()].alertFill);
+
+      localStorage.setItem("quizUser", JSON.stringify({ fullname, branch: branchValue }));
+      window.location.href = "question.html";
+    });
+  </script>
+</body>
+</html>
